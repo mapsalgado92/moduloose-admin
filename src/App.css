@@ -13,16 +13,17 @@
 
 .admin h1 {
     font-size: 2rem;
-    margin-top: -0.5em;
+    margin-top: 0;
     color: rgb(34, 31, 31);
 }
 
 #content-container {
-    margin: 0;
-    padding: 1rem;
+    margin-top: 0;
+    padding: 2em;
     box-sizing: border-box;
-    width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: row;
 }
 
 #selector-wrapper {
@@ -33,8 +34,7 @@
 .dropdown-toggle {
     margin-bottom: 0.5em;
     box-sizing: border-box;
-    width: 50%;
-    min-width: 30em;
+    width: 70%;
     text-align: left;
     overflow: hidden;
 }
@@ -42,6 +42,7 @@
 .edit-button {
     margin-bottom: 0.5em;
     box-sizing: border-box;
+    position: relative;
 }
 
 .dropdown-toggle::after {
@@ -49,7 +50,7 @@
 }
 
 .dropdown-menu {
-    width: 50%;
+    width: 100%;
     min-width: 30em;
     text-align: left;
     overflow: hidden;
@@ -67,3 +68,4 @@
 .form-container textarea {
     height: 15em;
 }
+

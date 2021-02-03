@@ -8,10 +8,11 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 //ADMIN PAGE
 function App() {
-  const modules = useFirestore('/moduloose/Uw7nTXVOrY0nocrZDLWH/Modules');
-  const collectionsList = useFirestore('moduloose/Uw7nTXVOrY0nocrZDLWH/Skills');
+  const modules = useFirestore('moduloose/moduloose-main/modules'); //Array of all modules
+  const groups = useFirestore('moduloose/moduloose-main/groups'); //Array of all groups
   
-  const [collection, setCollection] = useState(null);
+  const [group, setGroup] = useState(null);
+  const [modulesGroup, setModulesGroup] = useState(null);
   
   //MODULE FORM
   const [formType, setFormType] = useState("");
@@ -19,9 +20,10 @@ function App() {
   const [formContent, setFormContent] = useState("");
 
   useEffect(()=>{
-    collection && setCollection(collectionsList.find((col) => col.name === collection.name));
-  }, [collectionsList, collection])
-  
+    group && setGroup(groups.find((gr) => gr.name === group.name));
+    group && setModulesGroup(modules.filter((module) => module.group === group.name))
+  }, [groups, group, modules]);
+
   const handleChangeType = (e) => {
     setFormType(e.target.value);
   }
@@ -34,61 +36,76 @@ function App() {
     setFormContent(e.target.value);
   }
 
+  const handleSelectGroup = (group) => {
+    setGroup(group);
+    setModulesGroup(modules.filter((module) => module.group === group.name));
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if(formType && formTitle && formContent !== "delete" && formContent !== ""){
+    if(formType && formTitle && formContent !== "delete" && formContent !== "change"){
       //ADDING OR UPDATING
-      let newID = collection.name + formType + formTitle;
-      newID = newID.split(" ").join("_");
-      console.log(newID);
-
-      if(modules.find(module => module.id === newID)){
-        //UPDATING MODULE
-        uploadFirestore('/moduloose/Uw7nTXVOrY0nocrZDLWH/Modules', {title: formTitle, content: formContent, id: newID});
+      let moduleExists = modulesGroup.filter(module => module.type === formType).find(module => module.title === formTitle);
+      if(moduleExists){
+        ///UPDATING MODULE
+        console.log("Updating Module")
+        uploadFirestore('moduloose/moduloose-main/modules', {group: group.name, type: formType, title: formTitle, content: formContent, id: moduleExists.id});
       } else {
-        //CREATING MODULE
-        uploadFirestore('/moduloose/Uw7nTXVOrY0nocrZDLWH/Modules', {title: formTitle, content: formContent, id: newID});
-        let newTypes = [...collection.types];
-        ////TYPE EXISTS
-        let typeExists = collection.types.find((type) => type.typeName === formType);
+      ///ADDING MODULE
+        console.log("Creating Module")
+        let newID = group.name + formType + formTitle;
+        newID = newID.split(" ").join("_");
+        uploadFirestore('moduloose/moduloose-main/modules', {group:group.name, type: formType, title: formTitle, content: formContent, id: newID});
+        ////MANAGE TYPE
+        let typeExists = group.types.find((type) => type === formType);
         if(typeExists) {
-          typeExists.moduleIDs.push(newID);
+          console.log("--Type already exists");
         } 
         ////TYPE DOES NOT EXIST
         else {
-          newTypes.push({typeName: formType, moduleIDs: [newID]})
+          console.log("--Creating Type")
+          let newTypes = [...group.types].concat([formType]);
+          uploadFirestore('moduloose/moduloose-main/groups', {...group, types: newTypes});
         }
-        //UPLOAD COLLECTION
-        uploadFirestore('moduloose/Uw7nTXVOrY0nocrZDLWH/Skills', {...collection, types: newTypes});
       }
     } 
-    
     else if (formType && formTitle && formContent === ("delete" || "")) {
       //DELETING MODULE
-      let deleteID = collection.name + formType + formTitle;
-      deleteID = deleteID.split(" ").join("_");
-      console.log("MODULES: " + modules);
-      console.log("Delete ID: " + deleteID);
-      console.log(modules.map(module => console.log(module.id)));
-      if(modules.find((module) => module.id === deleteID)){
-        //MODULE EXISTS
-        deleteFirestore('moduloose/Uw7nTXVOrY0nocrZDLWH/Modules', deleteID);
-        //ELIMINATION MODULE ID FROM COLLECTION
-        let newTypes = [...collection.types];
-        let typeExists = collection.types.find((type) => type.typeName === formType);
-        typeExists.moduleIDs = typeExists.moduleIDs.filter((moduleID) => moduleID !== deleteID);
-        if(typeExists.moduleIDs.length === 0){
-          ////EMPTY TYPE, DELETE
-          newTypes = newTypes.filter((type) => type.typeName !== formType);
+      let moduleExists = modulesGroup.find((module) => module.title === formTitle && module.type === formType);
+      if(moduleExists) {
+        console.log("Deleting Module")
+        deleteFirestore('moduloose/moduloose-main/modules', moduleExists.id);
+        ////MANAGE TYPE
+        let typesLeft = modulesGroup.filter((module) => module.type === formType).length
+        if(typesLeft <= 1) {
+          console.log("--Deleting Type from Group")
+          let newTypes = [...group.types].filter(type => type !== formType);
+          uploadFirestore('moduloose/moduloose-main/groups', {...group, types: newTypes});
+        } else {
+          console.log("--Type was preserved")
         }
-        uploadFirestore('moduloose/Uw7nTXVOrY0nocrZDLWH/Skills', {...collection, types: newTypes});
-      } else {
-        //MODULE DOES NOT EXIST
+      }
+      else {
+        ///MODULE DOES NOT EXIST
         console.log("Module does not exist");
       }
-    } else if (formType && formContent === "delete"){
-      console.log("We are deleting a type");
+    } else if (formType && formTitle && formContent === "change"){
+      //CHANGE TYPE NAME
+      let newName = formTitle;
+      if(group.types.find(type => type === formType)){
+        //CHANGE TYPE IN MODULES
+        let modulesToChange = modulesGroup.filter(module => module.type === formType);
+        modulesToChange.forEach(module => {
+          console.log("Changing type in Module")
+          uploadFirestore('moduloose/moduloose-main/modules', {...module, type: newName});
+        });
+        ///CHANGE TYPE IN GROUP
+        let newTypes = [...group.types].filter(type=>type !== formType).concat([newName]);
+        console.log("New Types: " + newTypes);
+        uploadFirestore('moduloose/moduloose-main/groups', {...group, types: newTypes});
+        console.log("Changing Type in Group");
+      }
     } else {
       console.log("No valid option");
     }
@@ -97,54 +114,52 @@ function App() {
     setFormContent("");
   }
 
-  //RENDER USER PAGE
+  //RENDER ADMIN PAGE
   return (
     <div id="app" className="admin">
       <div id="content-container">
-        <div>
+        <div id="selector-wrapper">
           <h1>Moduloose Admin</h1>
-          {/*SELECT COLLECTION*/ collectionsList &&
+          { groups &&
             <Dropdown>
               <Dropdown.Toggle variant="light">
-                  {collection ? collection.name : "Select Collection"}
+                  {group ? group.name : "Select Group"}
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                {collectionsList.map(collection => {
+                {groups.sort((a, b)=>{
+              var x = a.name.toLowerCase();
+              var y = b.name.toLowerCase();
+              if (x < y) {return -1;}
+              if (x > y) {return 1;}
+              return 0;
+            }).map(group => {
                   return(
-                    <Dropdown.Item id={collection.name} onClick={() => setCollection(collection)}>{collection.name}</Dropdown.Item>
+                    <Dropdown.Item id={group.name} onClick={() => handleSelectGroup(group)}>{group.name}</Dropdown.Item>
                   );
                 })}
               </Dropdown.Menu>
             </Dropdown>
           }
-          {/*VIEW MODULES*/ modules && collection &&
-            collection.types.sort((a, b)=>{
-              var x = a.typeName.toLowerCase();
-              var y = b.typeName.toLowerCase();
-              if (x < y) {return -1;}
-              if (x > y) {return 1;}
-              return 0;
-            }).map(type => {
+          {/*VIEW MODULES*/ modules && group &&
+            group.types.sort().map(type => {
               return (
-                <Dropdown id={type.typeName} className="selector-dropdown">
-                  <Dropdown.Toggle variant="dark">
-                  {type.typeName} 
-                  </Dropdown.Toggle>
-                  <CopyToClipboard id={type.typeName} text={type.typeName}><button className="btn btn-light edit-button">Copy Type</button></CopyToClipboard>
+                <Dropdown id={type} className="selector-dropdown">
+                  <Dropdown.Toggle variant="dark">{type}</Dropdown.Toggle>
+                  <CopyToClipboard id={type + "-copy"} text={type}><button className="btn btn-light edit-button">Copy</button></CopyToClipboard>
                   <Dropdown.Menu>
-                    {type.moduleIDs && type.moduleIDs.map(moduleID => {
-                      let module = modules.find(module => module.id === moduleID); 
-                      if(module){
+                    {modulesGroup && modulesGroup.filter((module)=>module.type === type).map(module => {
                         return(
-                          <CopyToClipboard id={moduleID} text={module.title}><Dropdown.Item  onClick={() => console.log("Clicked")}>{module.title}</Dropdown.Item></CopyToClipboard>
-                        );}
+                          <>
+                          <CopyToClipboard id={module.id} text={module.title}><Dropdown.Item onClick={() => setFormContent(module.content)}>{module.title}</Dropdown.Item></CopyToClipboard>
+                          </>
+                        )
                     })}
                   </Dropdown.Menu>
                 </Dropdown>
               )
             })
           }
-          {/*EDIT MODULE FORM*/modules && collection &&
+          {/*EDIT MODULE FORM*/modules && group &&
             <form className="form-container">
               <h3>Add-Update-Remove Module</h3>
               <label>Type</label>
