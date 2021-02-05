@@ -122,7 +122,7 @@ function App() {
           <h1>Moduloose Admin</h1>
           { groups &&
             <Dropdown>
-              <Dropdown.Toggle variant="light">
+              <Dropdown.Toggle variant="light" id="main-dropdown">
                   {group ? group.name : "Select Group"}
               </Dropdown.Toggle>
               <Dropdown.Menu>
