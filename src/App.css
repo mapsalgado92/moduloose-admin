@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;900&display=swap');
 
 .admin {
     min-height: 100vh;
@@ -8,18 +8,24 @@
     background: #ADA996;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #EAEAEA, #DBDBDB, #F2F2F2, #ADA996);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to right, #EAEAEA, #DBDBDB, #F2F2F2, #ADA996); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    font-family: 'Arvo', serif;
+    font-family: 'Rubik', serif;
 }
 
-.admin h1 {
-    font-size: 2rem;
-    margin-top: 0;
+.title-div {
+    height: 2.5em;
+}
+
+.title-div h1 {
+    font-size: 2em;
+    font-family: "Rubik";
+    font-weight: 900;
     color: rgb(34, 31, 31);
+    margin: 0;
+    padding:0;
 }
 
 #content-container {
-    margin-top: 0;
-    padding: 2em;
+    padding-top: 1em;
     box-sizing: border-box;
     height: 100%;
     display: flex;
@@ -29,6 +35,14 @@
 #selector-wrapper {
     margin: 0;
     padding: 0;
+    margin: auto;
+}
+
+#main-dropdown {
+    background-color:rgb(150, 0, 0);
+    font-weight: 400;
+    color: white;
+    border-radius: 0.5em;
 }
 
 .dropdown-toggle {
@@ -61,6 +75,7 @@
 .form-container {
     display: flex;
     flex-direction: column;
+    margin-top: 2em;
     width: 50%;
     min-width: 50em;;
 }
@@ -69,3 +84,10 @@
     height: 15em;
 }
 
+form h3 {
+    font-weight: bold;
+}
+
+form label {
+    font-weight: bold;
+}

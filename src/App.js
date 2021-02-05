@@ -119,7 +119,9 @@ function App() {
     <div id="app" className="admin">
       <div id="content-container">
         <div id="selector-wrapper">
-          <h1>Moduloose Admin</h1>
+          <div className="title-div">
+            <h1>Moduloose Admin</h1>
+          </div>
           { groups &&
             <Dropdown>
               <Dropdown.Toggle variant="light" id="main-dropdown">
