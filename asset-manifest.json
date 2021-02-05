@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/moduloose-admin/static/css/main.a410ec09.chunk.css",
-    "main.js": "/moduloose-admin/static/js/main.05b5a968.chunk.js",
-    "main.js.map": "/moduloose-admin/static/js/main.05b5a968.chunk.js.map",
+    "main.js": "/moduloose-admin/static/js/main.6ac9817c.chunk.js",
+    "main.js.map": "/moduloose-admin/static/js/main.6ac9817c.chunk.js.map",
     "runtime-main.js": "/moduloose-admin/static/js/runtime-main.8adb81c4.js",
     "runtime-main.js.map": "/moduloose-admin/static/js/runtime-main.8adb81c4.js.map",
     "static/css/2.150d169a.chunk.css": "/moduloose-admin/static/css/2.150d169a.chunk.css",
-    "static/js/2.8a601888.chunk.js": "/moduloose-admin/static/js/2.8a601888.chunk.js",
-    "static/js/2.8a601888.chunk.js.map": "/moduloose-admin/static/js/2.8a601888.chunk.js.map",
+    "static/js/2.db4d71a2.chunk.js": "/moduloose-admin/static/js/2.db4d71a2.chunk.js",
+    "static/js/2.db4d71a2.chunk.js.map": "/moduloose-admin/static/js/2.db4d71a2.chunk.js.map",
     "index.html": "/moduloose-admin/index.html",
     "static/css/2.150d169a.chunk.css.map": "/moduloose-admin/static/css/2.150d169a.chunk.css.map",
     "static/css/main.a410ec09.chunk.css.map": "/moduloose-admin/static/css/main.a410ec09.chunk.css.map",
-    "static/js/2.8a601888.chunk.js.LICENSE.txt": "/moduloose-admin/static/js/2.8a601888.chunk.js.LICENSE.txt"
+    "static/js/2.db4d71a2.chunk.js.LICENSE.txt": "/moduloose-admin/static/js/2.db4d71a2.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.8adb81c4.js",
     "static/css/2.150d169a.chunk.css",
-    "static/js/2.8a601888.chunk.js",
+    "static/js/2.db4d71a2.chunk.js",
     "static/css/main.a410ec09.chunk.css",
-    "static/js/main.05b5a968.chunk.js"
+    "static/js/main.6ac9817c.chunk.js"
   ]
 }
